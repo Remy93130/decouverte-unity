@@ -50,6 +50,8 @@ public class Player : MonoBehaviour, IColorable
     /// </summary>
     private void FixedUpdate()
     {
+        if (!GameManager.IsPlaying) return;
+
         if (mustTeleport)
         {
             Teleport();
