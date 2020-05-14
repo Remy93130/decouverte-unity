@@ -305,6 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb3819994de9ceb45bfce80004343cae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_EasingFunction: 21
 --- !u!23 &1253809370
 MeshRenderer:
   m_ObjectHideFlags: 0

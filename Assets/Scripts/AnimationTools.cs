@@ -19,13 +19,14 @@ namespace Tools
             objTransform.localScale = targetScale;
         }
 
-        public static IEnumerator TranslateCoroutine(Transform objTransform, Vector3 targetPosition, float duration)
+        public static IEnumerator TranslateCoroutine(Transform objTransform, Vector3 targetPosition, float duration, EasingFunctionDelegate easingFunction)
         {
             float elapsedTime = 0;
             Vector3 startPosition = objTransform.position;
             while (elapsedTime < duration)
             {
                 float k = elapsedTime / duration; // [0, 1]
+                k = easingFunction != null ? easingFunction(k) : k;
                 objTransform.position = Vector3.Lerp(startPosition, targetPosition, k);
                 elapsedTime += Time.deltaTime;
                 yield return null;
@@ -33,14 +34,15 @@ namespace Tools
             objTransform.localScale = targetPosition;
         }
 
-        public static IEnumerator MultiTranslateCoroutine(MonoBehaviour component, int nTranslation)
+        public static IEnumerator MultiTranslateCoroutine(MonoBehaviour component, int nTranslation, EasingFunctionDelegate easingFunction)
         {
             for (int i = 0; i < nTranslation; i++)
             {
                 yield return component.StartCoroutine(
                     AnimationTools.TranslateCoroutine(
                         component.transform,
-                        component.transform.position + Random.insideUnitSphere * 4, .5f
+                        component.transform.position + Random.insideUnitSphere * 4, .5f,
+                        easingFunction
                     )
                 );
             }
