@@ -1,16 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
     static MenuManager m_Instance;
+
+    bool m_IsReady = false;
+    
+    public static bool IsReady { get { return m_Instance.m_IsReady; } }
+
     public static MenuManager Instance { get { return m_Instance; } }
 
     [SerializeField] GameObject m_MenuPanel;
     [SerializeField] GameObject m_VictoryPanel;
 
     List<GameObject> m_Panels = new List<GameObject>();
+
+    public static event Action OnPlayButtonClick;
 
     void OpenPanel(GameObject panel)
     {
@@ -30,30 +38,33 @@ public class MenuManager : MonoBehaviour
     void Start()
     {
         GameManager.OnGameStateChanged += GameStateChanged;
+        m_IsReady = true;
     }
 
-    
-    void Update()
+    private void OnDestroy()
     {
-        
+        GameManager.OnGameStateChanged -= GameStateChanged;
     }
 
-    public void GameStateChanged(GameManager.GAMESTATE gameState)
+    public void GameStateChanged(GAMESTATE gameState)
     {
         switch (gameState)
         {
-            case GameManager.GAMESTATE.Menu:
+            case GAMESTATE.Menu:
                 OpenPanel(m_MenuPanel);
                 break;
-            case GameManager.GAMESTATE.Play:
+            case GAMESTATE.Play:
+                OpenPanel(null);
                 break;
-            case GameManager.GAMESTATE.Pause:
+            case GAMESTATE.Pause:
                 break;
-            case GameManager.GAMESTATE.Victory:
+            case GAMESTATE.Victory:
                 OpenPanel(m_VictoryPanel);
                 break;
-            case GameManager.GAMESTATE.GameOver:
+            case GAMESTATE.GameOver:
                 break;
         }
     }
+
+    public void PlayButtonClick() => OnPlayButtonClick?.Invoke();
 }

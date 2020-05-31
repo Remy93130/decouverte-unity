@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -7,14 +8,17 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get { return m_Instance; } }
 
-    // TODO: Le bouger
-    public enum GAMESTATE { Menu, Play, Pause, Victory, GameOver }
-
     GAMESTATE m_State;
+
+    [SerializeField] Player m_Player;
+    [SerializeField] int m_VictoryValue;
+
+    int m_Counter = 0;
 
     public static bool IsPlaying { get { return m_Instance.m_State == GAMESTATE.Play; } }
 
     public static event Action<GAMESTATE> OnGameStateChanged;
+    public static event Action<int> OnGameCounterChange;
 
     public void ChangeState(GAMESTATE state)
     {
@@ -28,15 +32,44 @@ public class GameManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    // Start is called before the first frame update
-    void Start()
+    IEnumerator Start()
     {
+        MenuManager.OnPlayButtonClick += PlayButtonClick;
+        // On attend que le MenuManager s abonne
+        while (!MenuManager.IsReady)
+            yield return null;
+        if (m_Player)
+            m_Player.OnPlayerRecolorized += PlayerRecolorized;
         ChangeState(GAMESTATE.Menu);
     }
 
-    // Update is called once per frame
-    void Update()
+    void SetCounter(int counter)
     {
-        
+        m_Counter = counter;
+        OnGameCounterChange?.Invoke(m_Counter);
+    }
+
+    private void PlayerRecolorized()
+    {
+        if (!IsPlaying) return;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+        SetCounter(++m_Counter);
+        if (m_Counter >= m_VictoryValue)
+            Victory();
+    }
+
+    private void OnDestroy()
+    {
+        MenuManager.OnPlayButtonClick -= PlayButtonClick;
+    }
+
+    void PlayButtonClick()
+    {
+        SetCounter(0);
+        ChangeState(GAMESTATE.Play);
+    }
+
+    private void Victory()
+    {
+        ChangeState(GAMESTATE.Victory);
     }
 }

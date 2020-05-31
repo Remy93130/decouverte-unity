@@ -1,4 +1,7 @@
 ﻿using UnityEngine;
+using System;
+
+using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour, IColorable
 {
@@ -26,6 +29,8 @@ public class Player : MonoBehaviour, IColorable
 
     #endregion
 
+    public event Action OnPlayerRecolorized;
+
     private void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
@@ -36,11 +41,6 @@ public class Player : MonoBehaviour, IColorable
         Application.targetFrameRate = 60;
         m_ShotNextTime = Time.time;
         Debug.Log(Time.frameCount + " - Start");
-    }
-
-    void Update()
-    {
-        
     }
 
     /// <summary>
@@ -110,6 +110,7 @@ public class Player : MonoBehaviour, IColorable
         if (mr)
         {
             mr.material.color = Random.ColorHSV();
+            OnPlayerRecolorized?.Invoke();
         }
     }
 

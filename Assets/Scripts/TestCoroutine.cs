@@ -55,7 +55,7 @@ public class TestCoroutine : MonoBehaviour
         GUILayout.BeginArea(new Rect(0, 0, Screen.width * .5f, Screen.height * .5f));
         if (GUILayout.Button("RESIZE"))
         {
-            StartCoroutine(AnimationTools.ResizeCoroutine(transform, transform.localScale * 2, 5f));
+            StartCoroutine(AnimationTools.ResizeCoroutine(this, transform.localScale * 2, 5f));
         }
         if (GUILayout.Button("START TRANSLATE"))
         {
